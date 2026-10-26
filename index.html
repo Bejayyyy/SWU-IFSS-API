@@ -24,14 +24,6 @@
 
     <main>
       <section class="toolbar" aria-label="API configuration">
-        <label class="field field--wide">
-          <span>Firebase callable base URL</span>
-          <input id="baseUrl" type="url" value="https://us-central1-valicheck-1009b.cloudfunctions.net" spellcheck="false" />
-        </label>
-        <label class="field">
-          <span>Firebase Web API key (for auth endpoints)</span>
-          <input id="firebaseApiKey" type="password" placeholder="Paste VITE_FIREBASE_API_KEY to test login" autocomplete="off" />
-        </label>
         <label class="field">
           <span>Filter endpoints</span>
           <input id="searchInput" type="search" placeholder="Search name, path, or category..." />
@@ -55,7 +47,15 @@
           </div>
           <button class="icon-button" value="cancel" aria-label="Close authorization dialog">&times;</button>
         </div>
-        <p class="dialog-help">Tokens stay in this browser tab only and are never written to the repository.</p>
+        <p class="dialog-help">Connection settings and tokens stay in this browser tab only and are never written to the repository.</p>
+        <label class="field">
+          <span>Firebase callable base URL</span>
+          <input id="baseUrl" type="url" value="https://us-central1-valicheck-1009b.cloudfunctions.net" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>Firebase Web API key (for authentication endpoints)</span>
+          <input id="firebaseApiKey" type="password" placeholder="Paste VITE_FIREBASE_API_KEY to test login" autocomplete="off" />
+        </label>
         <label class="field">
           <span>Firebase ID token</span>
           <textarea id="authToken" rows="4" placeholder="Paste the signed-in user's Firebase ID token"></textarea>

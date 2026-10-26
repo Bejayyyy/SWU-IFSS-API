@@ -275,6 +275,7 @@ authorizeButton.addEventListener('click', () => authorizationDialog.showModal())
 document.querySelector('#clearTokens').addEventListener('click', () => {
   authTokenInput.value = '';
   appCheckTokenInput.value = '';
+  firebaseApiKeyInput.value = '';
   authToken = '';
   appCheckToken = '';
   authorizeButton.classList.remove('has-token');
@@ -282,7 +283,7 @@ document.querySelector('#clearTokens').addEventListener('click', () => {
 document.querySelector('#saveTokens').addEventListener('click', () => {
   authToken = authTokenInput.value.trim().replace(/^Bearer\s+/i, '');
   appCheckToken = appCheckTokenInput.value.trim();
-  authorizeButton.classList.toggle('has-token', Boolean(authToken || appCheckToken));
+  authorizeButton.classList.toggle('has-token', Boolean(authToken || appCheckToken || firebaseApiKeyInput.value.trim()));
 });
 
 render();

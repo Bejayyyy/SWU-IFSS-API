@@ -37,7 +37,7 @@ button { cursor: pointer; }
 .authorize-button.has-token { color: #08724b; }
 
 main { width: min(1760px, 100%); margin: 0 auto; padding: 28px clamp(16px, 4vw, 64px) 72px; }
-.toolbar { display: grid; grid-template-columns: minmax(360px, 1.4fr) minmax(260px, 1fr) minmax(240px, 1fr); gap: 16px; padding: 20px; border: 1px solid var(--border); border-radius: 16px; background: white; box-shadow: 0 4px 18px rgb(34 48 72 / 6%); }
+.toolbar { display: grid; grid-template-columns: minmax(240px, 620px); justify-content: end; gap: 16px; padding: 20px; border: 1px solid var(--border); border-radius: 16px; background: white; box-shadow: 0 4px 18px rgb(34 48 72 / 6%); }
 .field { display: grid; gap: 7px; color: #384357; font-size: 12px; font-weight: 800; }
 .field input, .field textarea { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 9px; outline: none; color: #172033; background: #fff; font-weight: 500; resize: vertical; }
 .field input:focus, .field textarea:focus, .request-editor:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgb(143 8 8 / 10%); }
