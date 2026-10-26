@@ -103,8 +103,8 @@ main { width: min(1760px, 100%); margin: 0 auto; padding: 28px clamp(16px, 4vw, 
 .schema-summary strong { font-size: 17px; }
 .schema-summary .schema-expand { color: #cbd5e1; font-size: 13px; }
 .schema-summary code { color: #a78bfa; font-size: 12px; font-weight: 800; }
-.schema-summary .chevron { order: -1; font-size: 20px; transform: rotate(-90deg); }
-.schema-card.is-open .schema-summary .chevron { transform: none; }
+.schema-summary .chevron { margin-left: auto; font-size: 28px; transform: none; }
+.schema-card.is-open .schema-summary .chevron { transform: rotate(90deg); }
 .schema-details { padding: 0 24px 22px; border-top: 1px solid #3c4449; }
 .schema-description { margin: 16px 0; color: #cbd5e1; font-size: 13px; }
 .schema-table { width: 100%; border-collapse: collapse; font-size: 13px; }

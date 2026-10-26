@@ -243,10 +243,10 @@ function renderSchemas() {
     card.className = 'schema-card';
     card.innerHTML = `
       <button class="schema-summary" type="button" aria-expanded="false">
-        <span class="chevron" aria-hidden="true">⌃</span>
         <strong>${escapeHtml(item.name)}</strong>
         <span class="schema-expand">Expand</span>
         <code>object</code>
+        <span class="chevron" aria-hidden="true">›</span>
       </button>
       <div class="schema-details" hidden>
         <p class="schema-description">${escapeHtml(item.description)}</p>
