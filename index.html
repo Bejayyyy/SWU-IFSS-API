@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Interactive API documentation for SWU-IFSS Firebase callable services." />
+    <title>SWU-IFSS API Documentation</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <div class="brand-mark" aria-hidden="true">S</div>
+        <div>
+          <p class="eyebrow">Southwestern University PHINMA</p>
+          <h1>SWU-IFSS API</h1>
+          <p>Interactive documentation for the Integrated Facility Scheduling System.</p>
+        </div>
+      </div>
+      <button id="authorizeButton" class="authorize-button" type="button">
+        <span>Authorize</span><span aria-hidden="true">&#128274;</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="toolbar" aria-label="API configuration">
+        <label class="field field--wide">
+          <span>Firebase callable base URL</span>
+          <input id="baseUrl" type="url" value="https://us-central1-valicheck-1009b.cloudfunctions.net" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>Filter endpoints</span>
+          <input id="searchInput" type="search" placeholder="Search name, path, or category..." />
+        </label>
+      </section>
+
+      <section class="notice">
+        <strong>Firebase callable protocol</strong>
+        <span>Requests are sent as <code>{ "data": { ... } }</code>. Protected operations require a Firebase ID token; public operations can require an App Check token.</span>
+      </section>
+
+      <div id="apiGroups" class="api-groups" aria-live="polite"></div>
+    </main>
+
+    <dialog id="authorizationDialog" class="auth-dialog">
+      <form method="dialog">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">Request credentials</p>
+            <h2>Authorize API calls</h2>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close authorization dialog">&times;</button>
+        </div>
+        <p class="dialog-help">Tokens stay in this browser tab only and are never written to the repository.</p>
+        <label class="field">
+          <span>Firebase ID token</span>
+          <textarea id="authToken" rows="4" placeholder="Paste the signed-in user's Firebase ID token"></textarea>
+        </label>
+        <label class="field">
+          <span>Firebase App Check token (optional)</span>
+          <textarea id="appCheckToken" rows="3" placeholder="Required by public/AI endpoints when enforcement is enabled"></textarea>
+        </label>
+        <div class="dialog-actions">
+          <button id="clearTokens" class="button button--secondary" type="button">Clear</button>
+          <button id="saveTokens" class="button button--primary" value="default">Apply authorization</button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="endpointTemplate">
+      <article class="endpoint">
+        <button class="endpoint__summary" type="button" aria-expanded="false">
+          <span class="method">POST</span>
+          <code class="endpoint__path"></code>
+          <span class="endpoint__description"></span>
+          <span class="security" title="Authentication required" aria-label="Authentication required">&#128274;</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="endpoint__details" hidden>
+          <div class="detail-grid">
+            <section>
+              <div class="section-heading">
+                <h4>Request body</h4>
+                <button class="try-button" type="button">Try it out</button>
+              </div>
+              <p class="endpoint__access"></p>
+              <div class="tabs" role="tablist">
+                <button class="tab is-active" type="button">Example value</button>
+                <button class="tab schema-tab" type="button">Schema</button>
+              </div>
+              <pre class="code-block"><code class="request-example"></code></pre>
+              <textarea class="request-editor" spellcheck="false" hidden></textarea>
+              <div class="execute-actions" hidden>
+                <button class="button button--primary execute-button" type="button">Execute</button>
+                <button class="button button--secondary cancel-button" type="button">Cancel</button>
+              </div>
+            </section>
+            <section class="response-section">
+              <h4>Responses</h4>
+              <div class="response-row"><strong>200</strong><span>Successful response</span></div>
+              <div class="response-row"><strong>400/401/403</strong><span>Firebase callable error</span></div>
+              <pre class="code-block"><code class="response-example"></code></pre>
+              <div class="live-response" hidden>
+                <div class="response-meta"></div>
+                <pre class="code-block"><code></code></pre>
+              </div>
+            </section>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
