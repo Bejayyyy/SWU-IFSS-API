@@ -105,6 +105,103 @@ const endpointGroups = [
   },
 ];
 
+const schemas = [
+  schema('Error', 'Standard error returned by Firebase callable or authentication operations.', [
+    field('error', 'object', true, 'Error container.'),
+    field('error.code', 'string', false, 'Machine-readable error code.'),
+    field('error.message', 'string', true, 'Human-readable failure description.'),
+    field('error.details', 'object | null', false, 'Optional validation or diagnostic details.'),
+  ]),
+  schema('Success', 'Shared success result used by operations that do not return a domain record.', [
+    field('success', 'boolean', true, 'Indicates that the requested operation completed.'),
+    field('message', 'string', false, 'Optional confirmation message.'),
+  ]),
+  schema('LoginRequest', 'Email and password credentials sent to Firebase Authentication.', [
+    field('email', 'string(email)', true, 'Provisioned institutional account email.'),
+    field('password', 'string', true, 'Account password.'),
+    field('returnSecureToken', 'boolean', true, 'Requests ID and refresh tokens.'),
+  ]),
+  schema('LoginResponse', 'Firebase Authentication session returned after successful sign-in.', [
+    field('idToken', 'string', true, 'Firebase ID token used to authorize protected requests.'),
+    field('refreshToken', 'string', true, 'Token used to renew the session.'),
+    field('expiresIn', 'string', true, 'ID-token lifetime in seconds.'),
+    field('localId', 'string', true, 'Firebase Authentication user UID.'),
+    field('email', 'string(email)', true, 'Authenticated account email.'),
+  ]),
+  schema('UserAccount', 'Authenticated Firebase account combined with the SWU-IFSS profile.', [
+    field('uid', 'string', true, 'Firebase Authentication UID.'),
+    field('email', 'string(email)', true, 'Institutional email address.'),
+    field('displayName', 'string', false, 'Person or account display name.'),
+    field('role', 'string', true, 'SWU-IFSS role such as registrar, dean, GSD, or developer.'),
+    field('status', 'string', true, 'Account status; access requires active.'),
+    field('department', 'string | null', false, 'Assigned college or department.'),
+    field('mustSetPassword', 'boolean', false, 'Whether first-login password setup is required.'),
+  ]),
+  schema('PasswordResetRequest', 'OTP-based password recovery request.', [
+    field('email', 'string(email)', true, 'Account email receiving the recovery OTP.'),
+    field('otp', 'string', false, 'Verification code required during confirmation.'),
+    field('newPassword', 'string', false, 'Replacement password required during confirmation.'),
+  ]),
+  schema('AiGenerationRequest', 'Content-generation input sent through the configured Gemini service.', [
+    field('prompt', 'string', false, 'Direct user prompt.'),
+    field('contents', 'array<object>', false, 'Gemini multi-turn content structure.'),
+    field('systemInstruction', 'string', false, 'System behavior and response constraints.'),
+    field('generationConfig', 'object', false, 'Temperature and output-token configuration.'),
+  ]),
+  schema('ExternalReservationRequest', 'Public facility-reservation intake submitted by an external organization.', [
+    field('requesterName', 'string', true, 'Name of the external requestor.'),
+    field('organization', 'string', true, 'Organization represented by the requestor.'),
+    field('email', 'string(email)', true, 'Contact and tracking email.'),
+    field('phone', 'string', true, 'Contact number.'),
+    field('title', 'string', true, 'Event or activity title.'),
+    field('purpose', 'string', true, 'Purpose of the facility request.'),
+    field('preferredDate', 'string(date)', true, 'Requested activity date.'),
+    field('timeStart', 'string(time)', true, 'Requested starting time.'),
+    field('timeEnd', 'string(time)', true, 'Requested ending time.'),
+    field('expectedAttendees', 'integer', true, 'Expected number of attendees.'),
+  ]),
+  schema('ExternalReservationTracking', 'Public tracking credentials and summarized reservation status.', [
+    field('trackingCode', 'string', true, 'Generated booking reference.'),
+    field('email', 'string(email)', true, 'Email used when submitting the request.'),
+    field('status', 'string', false, 'Current workflow status.'),
+    field('decisionRemarks', 'string | null', false, 'Latest approver remarks.'),
+  ]),
+  schema('ScheduleApprovalRequest', 'Request for approval when a plotted class uses a controlled or non-allocated room.', [
+    field('courseCode', 'string', true, 'Course identifier.'),
+    field('sectionName', 'string', true, 'Recipient section.'),
+    field('roomName', 'string', true, 'Requested room.'),
+    field('reason', 'string', true, 'Dean justification for using the room.'),
+    field('approvalSubmissionId', 'string', false, 'Groups related plotted schedule entries.'),
+    field('actionLink', 'string', false, 'Approval-management route.'),
+  ]),
+  schema('MaintenanceRelocationNotice', 'Email notification describing a class relocation or recovery decision.', [
+    field('email', 'string(email)', true, 'Notification recipient.'),
+    field('courseCode', 'string', true, 'Affected course.'),
+    field('classDate', 'string(date)', true, 'Affected class date.'),
+    field('classTime', 'string', true, 'Affected time range.'),
+    field('originalRoom', 'string', true, 'Room placed under maintenance.'),
+    field('replacementRoom', 'string | null', false, 'Approved temporary room.'),
+    field('status', 'string', true, 'Relocation, asynchronous, pending-selection, or restored state.'),
+  ]),
+  schema('ReservationNotification', 'Shared reservation email payload for submission, approval, rejection, or postponement.', [
+    field('email', 'string(email)', true, 'Notification recipient.'),
+    field('displayName', 'string', false, 'Recipient display name.'),
+    field('title', 'string', true, 'Reservation or activity title.'),
+    field('resType', 'string', false, 'Academic, non-academic, or external reservation type.'),
+    field('venue', 'string', false, 'Designated room and building.'),
+    field('status', 'string', false, 'Current approval or decision status.'),
+    field('link', 'string', false, 'Relevant application route.'),
+  ]),
+];
+
+function schema(name, description, fields) {
+  return { name, description, fields };
+}
+
+function field(name, type, required, description) {
+  return { name, type, required, description };
+}
+
 function endpoint(name, description, request, response, access, options = {}) {
   return { name, path: options.path || `/${name}`, description, request, response, access, service: options.service || 'callable' };
 }
@@ -137,6 +234,43 @@ const appCheckTokenInput = document.querySelector('#appCheckToken');
 
 let authToken = '';
 let appCheckToken = '';
+
+function renderSchemas() {
+  const container = document.querySelector('#schemasContent');
+  container.replaceChildren();
+  schemas.forEach((item) => {
+    const card = document.createElement('article');
+    card.className = 'schema-card';
+    card.innerHTML = `
+      <button class="schema-summary" type="button" aria-expanded="false">
+        <span class="chevron" aria-hidden="true">⌃</span>
+        <strong>${escapeHtml(item.name)}</strong>
+        <span class="schema-expand">Expand</span>
+        <code>object</code>
+      </button>
+      <div class="schema-details" hidden>
+        <p class="schema-description">${escapeHtml(item.description)}</p>
+        <table class="schema-table">
+          <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>${item.fields.map((property) => `
+            <tr>
+              <td>${escapeHtml(property.name)}${property.required ? '<span class="schema-required">required</span>' : ''}</td>
+              <td><span class="schema-type">${escapeHtml(property.type)}</span></td>
+              <td>${escapeHtml(property.description)}</td>
+            </tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    const summary = card.querySelector('.schema-summary');
+    const details = card.querySelector('.schema-details');
+    summary.addEventListener('click', () => {
+      const open = card.classList.toggle('is-open');
+      details.hidden = !open;
+      summary.setAttribute('aria-expanded', String(open));
+      card.querySelector('.schema-expand').textContent = open ? 'Collapse' : 'Expand';
+    });
+    container.append(card);
+  });
+}
 
 function pretty(value) {
   return JSON.stringify(value, null, 2);
@@ -271,6 +405,13 @@ function escapeHtml(value) {
 }
 
 searchInput.addEventListener('input', () => render(searchInput.value));
+document.querySelector('#schemasToggle').addEventListener('click', (event) => {
+  const section = document.querySelector('#schemasSection');
+  const content = document.querySelector('#schemasContent');
+  const collapsed = section.classList.toggle('is-collapsed');
+  content.hidden = collapsed;
+  event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+});
 authorizeButton.addEventListener('click', () => authorizationDialog.showModal());
 document.querySelector('#clearTokens').addEventListener('click', () => {
   authTokenInput.value = '';
@@ -287,3 +428,4 @@ document.querySelector('#saveTokens').addEventListener('click', () => {
 });
 
 render();
+renderSchemas();
