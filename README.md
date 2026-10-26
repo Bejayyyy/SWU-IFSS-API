@@ -26,3 +26,9 @@ The deployable static files are generated in `api/dist` and are independent of t
 These are Firebase HTTPS callable functions, not ordinary REST handlers. The documentation client sends request values inside the required `{ "data": ... }` envelope. For protected functions, open **Authorize** and provide a Firebase ID token. Add an App Check token when enforcement is enabled for the chosen endpoint.
 
 The documentation intentionally excludes Firestore background triggers because they cannot be invoked directly over HTTP.
+
+## Authentication documentation
+
+SWU-IFSS does not expose a custom password-taking Cloud Function. User and administrator login both use Firebase Authentication. After sign-in, the main application loads the user's Firestore profile and checks that the account is active and that its role is allowed to enter the requested application area.
+
+The `user-auth` and `admin-auth` sections document the underlying Firebase Identity Toolkit endpoints. To execute those examples, enter the project's Firebase Web API key in the documentation toolbar. Never paste a user's password into a shared or untrusted deployment of the documentation.

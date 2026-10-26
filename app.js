@@ -1,5 +1,25 @@
 const endpointGroups = [
   {
+    name: 'user-auth',
+    description: 'Firebase sign-in and account-session operations used by SWU-IFSS personnel.',
+    endpoints: [
+      endpoint('userEmailLogin', 'Sign in a provisioned user with institutional email and password', { email: 'user@swu.edu.ph', password: 'string', returnSecureToken: true }, { idToken: 'firebase-id-token', email: 'user@swu.edu.ph', refreshToken: 'firebase-refresh-token', expiresIn: '3600', localId: 'firebase-user-uid' }, 'public', { service: 'firebase-auth', path: '/v1/accounts:signInWithPassword' }),
+      endpoint('userGoogleLogin', 'Exchange a Google identity credential for a Firebase session', { requestUri: 'https://your-app.example/login', postBody: 'id_token=GOOGLE_ID_TOKEN&providerId=google.com', returnIdpCredential: true, returnSecureToken: true }, { idToken: 'firebase-id-token', providerId: 'google.com', localId: 'firebase-user-uid' }, 'public', { service: 'firebase-auth', path: '/v1/accounts:signInWithIdp' }),
+      endpoint('getCurrentAccount', 'Read the Firebase account represented by an ID token', { idToken: 'firebase-id-token' }, { users: [{ localId: 'firebase-user-uid', email: 'user@swu.edu.ph', emailVerified: true }] }, 'authenticated', { service: 'firebase-auth', path: '/v1/accounts:lookup' }),
+      endpoint('changeOwnPassword', 'Change the signed-in Firebase account password', { idToken: 'firebase-id-token', password: 'NewStrongPassword123!', returnSecureToken: true }, { idToken: 'new-firebase-id-token', refreshToken: 'new-refresh-token', expiresIn: '3600' }, 'authenticated', { service: 'firebase-auth', path: '/v1/accounts:update' }),
+      endpoint('sendPasswordResetOTP', 'Send the SWU-IFSS password-recovery OTP', { email: 'user@swu.edu.ph' }, { success: true }, 'public'),
+      endpoint('verifyOTPAndResetPassword', 'Verify the recovery OTP and set a new password', { email: 'user@swu.edu.ph', otp: '123456', newPassword: 'NewStrongPassword123!' }, { success: true }, 'public'),
+    ],
+  },
+  {
+    name: 'admin-auth',
+    description: 'Administrator sign-in uses Firebase Auth, followed by active-profile and role validation in SWU-IFSS.',
+    endpoints: [
+      endpoint('adminEmailLogin', 'Sign in a Registrar or Developer; the app then verifies the Firestore role and active status', { email: 'registrar@swu.edu.ph', password: 'string', returnSecureToken: true }, { idToken: 'firebase-id-token', email: 'registrar@swu.edu.ph', refreshToken: 'firebase-refresh-token', expiresIn: '3600', localId: 'firebase-user-uid' }, 'public', { service: 'firebase-auth', path: '/v1/accounts:signInWithPassword' }),
+      endpoint('getAdminAccount', 'Inspect the authenticated Firebase account before SWU-IFSS applies role authorization', { idToken: 'firebase-id-token' }, { users: [{ localId: 'firebase-user-uid', email: 'registrar@swu.edu.ph', emailVerified: true }] }, 'authenticated', { service: 'firebase-auth', path: '/v1/accounts:lookup' }),
+    ],
+  },
+  {
     name: 'diagnostics',
     description: 'Read-only checks for Cloud Functions and Firestore connectivity.',
     endpoints: [
@@ -85,8 +105,8 @@ const endpointGroups = [
   },
 ];
 
-function endpoint(name, description, request, response, access) {
-  return { name, path: `/${name}`, description, request, response, access };
+function endpoint(name, description, request, response, access, options = {}) {
+  return { name, path: options.path || `/${name}`, description, request, response, access, service: options.service || 'callable' };
 }
 
 const accessLabels = {
@@ -109,6 +129,7 @@ const groupsContainer = document.querySelector('#apiGroups');
 const endpointTemplate = document.querySelector('#endpointTemplate');
 const searchInput = document.querySelector('#searchInput');
 const baseUrlInput = document.querySelector('#baseUrl');
+const firebaseApiKeyInput = document.querySelector('#firebaseApiKey');
 const authorizeButton = document.querySelector('#authorizeButton');
 const authorizationDialog = document.querySelector('#authorizationDialog');
 const authTokenInput = document.querySelector('#authToken');
@@ -176,8 +197,8 @@ function createEndpoint(item) {
   fragment.querySelector('.endpoint__path').textContent = item.path;
   fragment.querySelector('.endpoint__description').textContent = item.description;
   fragment.querySelector('.endpoint__access').textContent = accessLabels[item.access] || item.access;
-  requestCode.textContent = pretty({ data: item.request });
-  responseCode.textContent = pretty({ result: item.response });
+  requestCode.textContent = pretty(item.service === 'firebase-auth' ? item.request : { data: item.request });
+  responseCode.textContent = pretty(item.service === 'firebase-auth' ? item.response : { result: item.response });
   editor.value = pretty(item.request);
 
   summary.addEventListener('click', () => {
@@ -209,14 +230,20 @@ function createEndpoint(item) {
       executeButton.disabled = true;
       executeButton.textContent = 'Executing…';
       const startedAt = performance.now();
-      const response = await fetch(`${baseUrlInput.value.trim().replace(/\/$/, '')}/${item.name}`, {
+      const isFirebaseAuth = item.service === 'firebase-auth';
+      const apiKey = firebaseApiKeyInput.value.trim();
+      if (isFirebaseAuth && !apiKey) throw new Error('Enter the Firebase Web API key above before executing an authentication endpoint.');
+      const targetUrl = isFirebaseAuth
+        ? `https://identitytoolkit.googleapis.com${item.path}?key=${encodeURIComponent(apiKey)}`
+        : `${baseUrlInput.value.trim().replace(/\/$/, '')}/${item.name}`;
+      const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
           ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } : {}),
         },
-        body: JSON.stringify({ data: payload }),
+        body: JSON.stringify(isFirebaseAuth ? payload : { data: payload }),
       });
       const responseText = await response.text();
       let body;
