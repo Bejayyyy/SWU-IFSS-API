@@ -367,9 +367,11 @@ function createEndpoint(item) {
       const isFirebaseAuth = item.service === 'firebase-auth';
       const apiKey = firebaseApiKeyInput.value.trim();
       if (isFirebaseAuth && !apiKey) throw new Error('Enter the Firebase Web API key above before executing an authentication endpoint.');
+      const callableBaseUrl = baseUrlInput.value.trim().replace(/\/$/, '');
+      if (!isFirebaseAuth && !callableBaseUrl) throw new Error('Enter the Firebase callable base URL in Authorize before executing this endpoint.');
       const targetUrl = isFirebaseAuth
         ? `https://identitytoolkit.googleapis.com${item.path}?key=${encodeURIComponent(apiKey)}`
-        : `${baseUrlInput.value.trim().replace(/\/$/, '')}/${item.name}`;
+        : `${callableBaseUrl}/${item.name}`;
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
