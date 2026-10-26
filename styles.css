@@ -43,6 +43,7 @@ main { width: min(1760px, 100%); margin: 0 auto; padding: 28px clamp(16px, 4vw, 
 .field input:focus, .field textarea:focus, .request-editor:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgb(143 8 8 / 10%); }
 .notice { display: flex; align-items: center; gap: 12px; margin: 18px 0 28px; padding: 14px 18px; border: 1px solid #f0cf79; border-radius: 12px; color: #67480a; background: #fff9e9; font-size: 13px; }
 .notice code { padding: 2px 5px; border-radius: 4px; background: rgb(255 255 255 / 75%); }
+.notice--info { margin-top: -12px; border-color: #b8d5f4; color: #164b7d; background: #eff7ff; }
 
 .api-groups { display: grid; gap: 26px; }
 .api-group { border-bottom: 1px solid #cbd2dc; padding-bottom: 18px; }
