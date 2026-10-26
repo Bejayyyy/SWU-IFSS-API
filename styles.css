@@ -52,12 +52,10 @@ main { width: min(1760px, 100%); margin: 0 auto; padding: 28px clamp(16px, 4vw, 
 .group-heading .chevron { margin-left: auto; font-size: 26px; }
 .group-endpoints { display: grid; gap: 10px; }
 .endpoint { overflow: hidden; border: 1px solid var(--green); border-radius: 7px; background: var(--green-soft); }
-.endpoint__summary { display: grid; grid-template-columns: 100px minmax(210px, auto) 1fr 28px 28px; align-items: center; gap: 14px; width: 100%; padding: 7px; border: 0; color: #172033; background: transparent; text-align: left; }
+.endpoint__summary { display: grid; grid-template-columns: 100px minmax(210px, auto) 1fr 28px; align-items: center; gap: 14px; width: 100%; padding: 7px; border: 0; color: #172033; background: transparent; text-align: left; }
 .method { padding: 8px 13px; border-radius: 4px; color: #fff; background: #42c78b; text-align: center; font-weight: 900; }
 .endpoint__path { font-size: 15px; font-weight: 800; }
 .endpoint__description { color: #344055; font-size: 14px; }
-.security { color: #7c8798; text-align: center; }
-.endpoint.is-public .security { visibility: hidden; }
 .chevron { font-size: 23px; line-height: 1; transition: transform .2s; }
 .endpoint.is-open .endpoint__summary .chevron, .api-group.is-collapsed > .group-heading .chevron { transform: rotate(180deg); }
 .endpoint__details { border-top: 1px solid var(--green); padding: 24px; background: #f3fcf8; }
@@ -96,7 +94,7 @@ main { width: min(1760px, 100%); margin: 0 auto; padding: 28px clamp(16px, 4vw, 
 @media (max-width: 850px) {
   .hero { align-items: flex-start; flex-direction: column; }
   .toolbar, .detail-grid { grid-template-columns: 1fr; }
-  .endpoint__summary { grid-template-columns: 76px minmax(0, 1fr) 25px 25px; gap: 9px; }
+  .endpoint__summary { grid-template-columns: 76px minmax(0, 1fr) 25px; gap: 9px; }
   .endpoint__description { grid-column: 2 / -1; grid-row: 2; }
   .method { padding-inline: 8px; }
   .group-heading { align-items: flex-start; flex-wrap: wrap; }
