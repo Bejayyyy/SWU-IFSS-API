@@ -30,14 +30,9 @@
         </label>
       </section>
 
-      <section class="notice">
-        <strong>Firebase callable protocol</strong>
-        <span>Requests are sent as <code>{ "data": { ... } }</code>. Protected operations require a Firebase ID token; public operations can require an App Check token.</span>
-      </section>
-
       <section class="notice notice--info" aria-label="HTTP method explanation">
-        <strong>Why most endpoints use POST</strong>
-        <span>SWU-IFSS uses Firebase <code>https.onCall()</code>, which transports every callable operation through POST. An endpoint may logically read, create, update, or delete records even though its HTTP transport method remains POST. The authentication entries below use Firebase Authentication REST endpoints.</span>
+        <strong>Why all endpoints use POST</strong>
+        <span>SWU-IFSS uses Firebase callable functions and Firebase Authentication operations that are transported through POST. An endpoint may logically read, create, update, or delete records even though its HTTP transport method remains POST.</span>
       </section>
 
       <div id="apiGroups" class="api-groups" aria-live="polite"></div>
